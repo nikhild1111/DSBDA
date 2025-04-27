@@ -1,0 +1,67 @@
+[cloudera@quickstart ~]$ hive
+
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+WARNING: Hive CLI is deprecated and migration to Beeline is recommended.
+hive> create database mydb3;
+OK
+Time taken: 1.093 seconds
+hive> use mydb3;
+OK
+Time taken: 0.093 seconds
+hive> create table hive_int(id int,name varchar(10),sal float) 
+    > row format delimited
+    > fields terminated by ','
+    > lines terminated by '\n'
+    > stored as textfile;
+OK
+Time taken: 0.967 seconds
+hive> load data local inpath 'data.txt' into table hive_int;
+Loading data to table mydb3.hive_int
+Table mydb3.hive_int stats: [numFiles=1, totalSize=57]
+OK
+Time taken: 1.792 seconds
+hive> select * from hive_int;
+OK
+1	aakash	50.0
+2	amit	90.0
+3	gargee	20.0
+4	dipak	67.0
+Time taken: 1.116 seconds, Fetched: 4 row(s)
+hive> create external table hive_ext(id int,name varchar(10),sal float)
+    > row format delimited
+    > fields terminated by ','
+    > lines terminated by '\n'
+    > stored as textfile;
+OK
+Time taken: 0.135 seconds
+hive> insert into hive_ext select * from hive_int;
+Query ID = cloudera_20250109013939_9a1c428d-64ac-47b7-b979-3efae9a737ca
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1736404378129_0005, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1736404378129_0005/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1736404378129_0005
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2025-01-09 01:40:15,851 Stage-1 map = 0%,  reduce = 0%
+2025-01-09 01:40:35,090 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.78 sec
+MapReduce Total cumulative CPU time: 2 seconds 780 msec
+Ended Job = job_1736404378129_0005
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to: hdfs://quickstart.cloudera:8020/user/hive/warehouse/mydb3.db/hive_ext/.hive-staging_hive_2025-01-09_01-39-54_625_4405532102788083656-1/-ext-10000
+Loading data to table mydb3.hive_ext
+Table mydb3.hive_ext stats: [numFiles=1, numRows=4, totalSize=53, rawDataSize=49]
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 2.78 sec   HDFS Read: 3414 HDFS Write: 123 SUCCESS
+Total MapReduce CPU Time Spent: 2 seconds 780 msec
+OK
+Time taken: 43.502 seconds
+hive> select * from hive_ext;
+OK
+1	aakash	50.0
+2	amit	90.0
+3	gargee	20.0
+4	dipak	67.0
+Time taken: 0.091 seconds, Fetched: 4 row(s)
+hive> 

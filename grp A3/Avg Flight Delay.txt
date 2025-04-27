@@ -1,0 +1,118 @@
+[cloudera@quickstart ~]$ hdfs dfs -mkdir /HiveDirectory
+[cloudera@quickstart ~]$ hdfs dfs -put hive/emp_details /HiveDirectory
+put: `hive/emp_details': No such file or directory
+[cloudera@quickstart ~]$ hive
+
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+WARNING: Hive CLI is deprecated and migration to Beeline is recommended.
+hive> create external table emplist (Id int, Name string , Salary float)
+    > row format delimited
+    >  fields terminated by ',' 
+    > location '/HiveDirectory';
+OK
+Time taken: 1.56 seconds
+hive> select * from emplist;
+OK
+Time taken: 1.298 seconds
+hive> CREATE TABLE flight_data(
+    >    year INT,
+    >    month INT,
+    >    day INT,
+    >    day_of_week INT,
+    >    dep_time INT,
+    >    crs_dep_time INT,
+    >    arr_time INT,
+    >    crs_arr_time INT,
+    >    unique_carrier STRING,
+    >    flight_num INT,
+    >    tail_num STRING,
+    >    actual_elapsed_time INT,
+    >    crs_elapsed_time INT,
+    >    air_time INT,
+    >    arr_delay INT,
+    >    dep_delay INT,
+    >    origin STRING,
+    >    dest STRING,
+    >    distance INT,
+    >    taxi_in INT,
+    >    taxi_out INT,
+    >    cancelled INT,
+    >    cancellation_code STRING,
+    >    diverted INT,
+    >    carrier_delay STRING,
+    >    weather_delay STRING,
+    >    nas_delay STRING,
+    >    security_delay STRING,
+    >    late_aircraft_delay STRING
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ',';
+OK
+Time taken: 0.243 seconds
+hive> [cloudera@quickstart ~]$ hive
+
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+WARNING: Hive CLI is deprecated and migration to Beeline is recommended.
+hive> LOAD DATA LOCAL INPATH '/home/cloudera/2008.csv' OVERWRITE INTO TABLE flight_data;
+Loading data to table default.flight_data
+Table default.flight_data stats: [numFiles=1, numRows=0, totalSize=689413044, rawDataSize=0]
+OK
+Time taken: 24.547 seconds
+hive> SHOW TABLES;
+OK
+emplist
+flight_data
+Time taken: 0.496 seconds, Fetched: 2 row(s)
+hive> SELECT
+    >    *
+    > FROM
+    >    flight_data
+    > LIMIT 10; 
+OK
+2008	1	3	4	2003	1955	2211	2225	WN	335	N712SW	128	150	116	-14	8	IAD	TPA	810	4	80		0	NA	NA	NA	NA	NA
+2008	1	3	4	754	735	1002	1000	WN	3231	N772SW	128	145	113	2	19	IAD	TPA	810	5	10	0		0	NA	NA	NA	NA	NA
+2008	1	3	4	628	620	804	750	WN	448	N428WN	96	90	76	14	8	IND	BWI	515	3	17	0		0	NA	NA	NA	NA	NA
+2008	1	3	4	926	930	1054	1100	WN	1746	N612SW	88	90	78	-6	-4	IND	BWI	515	3	70		0	NA	NA	NA	NA	NA
+2008	1	3	4	1829	1755	1959	1925	WN	3920	N464WN	90	90	77	34	34	IND	BWI	515	3	10	0		0	2	0	0	0	32
+2008	1	3	4	1940	1915	2121	2110	WN	378	N726SW	101	115	87	11	25	IND	JAX	688	4	10	0		0	NA	NA	NA	NA	NA
+2008	1	3	4	1937	1830	2037	1940	WN	509	N763SW	240	250	230	57	67	IND	LAS	1591	3	70		0	10	0	0	0	47
+2008	1	3	4	1039	1040	1132	1150	WN	535	N428WN	233	250	219	-18	-1	IND	LAS	1591	7	70		0	NA	NA	NA	NA	NA
+2008	1	3	4	617	615	652	650	WN	11	N689SW	95	95	70	2	2	IND	MCI	451	6	19	0		0	NA	NA	NA	NA	NA
+2008	1	3	4	1620	1620	1639	1655	WN	810	N648SW	79	95	70	-16	0	IND	MCI	451	3	60		0	NA	NA	NA	NA	NA
+Time taken: 0.926 seconds, Fetched: 10 row(s)
+hive> SELECT
+    >    avg(arr_delay)
+    > FROM
+    >    flight_data
+    > WHERE
+    >    month=1
+    >    AND origin='SFO';
+Query ID = cloudera_20250109020909_bcd72466-4294-4f91-8969-70ab4bea8b16
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1736404378129_0006, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1736404378129_0006/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1736404378129_0006
+Hadoop job information for Stage-1: number of mappers: 3; number of reducers: 1
+2025-01-09 02:09:40,595 Stage-1 map = 0%,  reduce = 0%
+2025-01-09 02:10:40,655 Stage-1 map = 0%,  reduce = 0%, Cumulative CPU 21.71 sec
+2025-01-09 02:10:43,003 Stage-1 map = 42%,  reduce = 0%, Cumulative CPU 23.55 sec
+2025-01-09 02:10:44,430 Stage-1 map = 56%,  reduce = 0%, Cumulative CPU 23.84 sec
+2025-01-09 02:10:49,096 Stage-1 map = 78%,  reduce = 0%, Cumulative CPU 26.08 sec
+2025-01-09 02:10:51,748 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 26.38 sec
+2025-01-09 02:11:05,395 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 29.96 sec
+MapReduce Total cumulative CPU time: 29 seconds 960 msec
+Ended Job = job_1736404378129_0006
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 3  Reduce: 1   Cumulative CPU: 29.96 sec   HDFS Read: 689459052 HDFS Write: 19 SUCCESS
+Total MapReduce CPU Time Spent: 29 seconds 960 msec
+OK
+28.669403949068094
+Time taken: 109.896 seconds, Fetched: 1 row(s)
+hive> 

@@ -1,0 +1,200 @@
+[cloudera@quickstart ~]$ hive
+
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+WARNING: Hive CLI is deprecated and migration to Beeline is recommended.
+hive> create database mydb2;
+OK
+Time taken: 6.963 seconds
+hive> use mydb2;
+OK
+Time taken: 0.413 seconds
+hive> create table flight(fno int,year int,dest varchar(10),dealy float);
+OK
+Time taken: 1.08 seconds
+hive> alter table flight rename to air_flight;
+OK
+Time taken: 0.455 seconds
+hive> alter table air_flight add columns(source varchar(10));
+OK
+Time taken: 0.239 seconds
+hive> drop table flight;
+OK
+Time taken: 0.05 seconds
+hive> desc air_flight;
+OK
+fno                 	int                 	                    
+year                	int                 	                    
+dest                	varchar(10)         	                    
+dealy               	float               	                    
+source              	varchar(10)         	                    
+Time taken: 0.44 seconds, Fetched: 5 row(s)
+
+hive> create table flight(fno int,year int,dest varchar(10),delay float)
+    > row format delimited
+    > fields terminated by ','
+    > lines terminated by '\n'
+    > stored as textfile;
+OK
+Time taken: 0.112 seconds
+hive> insert into flight values(123,2009,'mumbai',30.6);
+Query ID = cloudera_20250108225656_c87be3a5-25bd-47a8-bf2e-ad0f7194624a
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1736404378129_0001, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1736404378129_0001/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1736404378129_0001
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2025-01-08 22:56:58,572 Stage-1 map = 0%,  reduce = 0%
+2025-01-08 22:57:22,993 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 4.43 sec
+MapReduce Total cumulative CPU time: 4 seconds 430 msec
+Ended Job = job_1736404378129_0001
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to: hdfs://quickstart.cloudera:8020/user/hive/warehouse/mydb2.db/flight/.hive-staging_hive_2025-01-08_22-56-15_665_5171955141282984070-1/-ext-10000
+Loading data to table mydb2.flight
+Table mydb2.flight stats: [numFiles=1, numRows=1, totalSize=21, rawDataSize=20]
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 4.43 sec   HDFS Read: 4157 HDFS Write: 89 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 430 msec
+OK
+Time taken: 71.201 seconds
+hive> insert into flight values(124,2008,'pune',50.6);
+Query ID = cloudera_20250108225757_80d3c12d-b979-425d-8c92-0c2b28802c82
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1736404378129_0002, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1736404378129_0002/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1736404378129_0002
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2025-01-08 22:58:15,882 Stage-1 map = 0%,  reduce = 0%
+2025-01-08 22:58:36,506 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 4.33 sec
+MapReduce Total cumulative CPU time: 4 seconds 330 msec
+Ended Job = job_1736404378129_0002
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to: hdfs://quickstart.cloudera:8020/user/hive/warehouse/mydb2.db/flight/.hive-staging_hive_2025-01-08_22-57-58_832_1963156951145251674-1/-ext-10000
+Loading data to table mydb2.flight
+Table mydb2.flight stats: [numFiles=2, numRows=2, totalSize=40, rawDataSize=38]
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 4.33 sec   HDFS Read: 4251 HDFS Write: 87 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 330 msec
+OK
+Time taken: 40.51 seconds
+hive> select * from flight;
+OK
+123	2009	mumbai	30.6
+124	2008	pune	50.6
+Time taken: 0.262 seconds, Fetched: 2 row(s)
+hive> load data local inpath "f.txt"
+    > overwrite into table flight;
+Loading data to table mydb2.flight
+Table mydb2.flight stats: [numFiles=1, numRows=0, totalSize=114, rawDataSize=0]
+OK
+Time taken: 1.493 seconds
+hive> select * from flight;
+OK
+923	2009	navi mumba	60.0
+156	2009	kolhapur	78.0
+112	2009	pune	0.0
+322	2008	nagpur	90.0
+132	2008	aurangabad	67.0
+NULL	NULL	NULL	NULL
+Time taken: 0.119 seconds, Fetched: 6 row(s)
+hive> create table nflight(fno int,year int,source varchar(10))
+    > row format delimited
+    > fields terminated by ','
+    > lines terminated by '\n'
+    > stored as textfile;
+OK
+Time taken: 0.14 seconds
+hive> select * from flight;
+OK
+923	2009	navi mumba	60.0
+156	2009	kolhapur	78.0
+112	2009	pune	0.0
+322	2008	nagpur	90.0
+132	2008	aurangabad	67.0
+NULL	NULL	NULL	NULL
+Time taken: 0.119 seconds, Fetched: 6 row(s)
+hive> insert into nflight values(923,2009,'pune');
+Query ID = cloudera_20250108231010_71c5fd23-c765-481c-8f00-5eb3633fe89b
+Total jobs = 3
+Launching Job 1 out of 3
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1736404378129_0003, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1736404378129_0003/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1736404378129_0003
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0
+2025-01-08 23:11:10,514 Stage-1 map = 0%,  reduce = 0%
+2025-01-08 23:11:32,440 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 4.15 sec
+MapReduce Total cumulative CPU time: 4 seconds 150 msec
+Ended Job = job_1736404378129_0003
+Stage-4 is selected by condition resolver.
+Stage-3 is filtered out by condition resolver.
+Stage-5 is filtered out by condition resolver.
+Moving data to: hdfs://quickstart.cloudera:8020/user/hive/warehouse/mydb2.db/nflight/.hive-staging_hive_2025-01-08_23-10-50_214_1109559560171102441-1/-ext-10000
+Loading data to table mydb2.nflight
+Table mydb2.nflight stats: [numFiles=1, numRows=1, totalSize=14, rawDataSize=13]
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 1   Cumulative CPU: 4.15 sec   HDFS Read: 3894 HDFS Write: 83 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 150 msec
+OK
+Time taken: 44.159 seconds
+hive> select a.fno,a.year,a.dest,a.delay,b.source
+    > from flight a join nflight b
+    > on (a.fno=b.fno);
+Query ID = cloudera_20250108231515_5b122e42-0b37-44d1-90ab-075a4f6f5f70
+Total jobs = 1
+Execution log at: /tmp/cloudera/cloudera_20250108231515_5b122e42-0b37-44d1-90ab-075a4f6f5f70.log
+2025-01-08 11:15:34	Starting to launch local task to process map join;	maximum memory = 932184064
+2025-01-08 11:15:40	Dump the side-table for tag: 1 with group count: 1 into file: file:/tmp/cloudera/1268cb74-5e40-42e5-a0c0-1840d49ebb37/hive_2025-01-08_23-15-24_871_7264260465523471020-1/-local-10003/HashTable-Stage-3/MapJoin-mapfile01--.hashtable
+2025-01-08 11:15:40	Uploaded 1 File to: file:/tmp/cloudera/1268cb74-5e40-42e5-a0c0-1840d49ebb37/hive_2025-01-08_23-15-24_871_7264260465523471020-1/-local-10003/HashTable-Stage-3/MapJoin-mapfile01--.hashtable (286 bytes)
+2025-01-08 11:15:40	End of local task; Time Taken: 6.343 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks is set to 0 since there's no reduce operator
+Starting Job = job_1736404378129_0004, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1736404378129_0004/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1736404378129_0004
+Hadoop job information for Stage-3: number of mappers: 1; number of reducers: 0
+2025-01-08 23:16:00,297 Stage-3 map = 0%,  reduce = 0%
+2025-01-08 23:16:23,959 Stage-3 map = 100%,  reduce = 0%, Cumulative CPU 4.83 sec
+MapReduce Total cumulative CPU time: 4 seconds 830 msec
+Ended Job = job_1736404378129_0004
+MapReduce Jobs Launched: 
+Stage-Stage-3: Map: 1   Cumulative CPU: 4.83 sec   HDFS Read: 6741 HDFS Write: 30 SUCCESS
+Total MapReduce CPU Time Spent: 4 seconds 830 msec
+OK
+923	2009	navi mumba	60.0	pune
+Time taken: 61.294 seconds, Fetched: 1 row(s)
+hive> select * from nflight;
+OK
+923	2009	pune
+Time taken: 0.127 seconds, Fetched: 1 row(s)
+hive> select * from flight;
+OK
+923	2009	navi mumba	60.0
+156	2009	kolhapur	78.0
+112	2009	pune	0.0
+322	2008	nagpur	90.0
+132	2008	aurangabad	67.0
+NULL	NULL	NULL	NULL
+Time taken: 0.127 seconds, Fetched: 6 row(s)
+
+hive> create index flight_index on table flight(fno)
+    > as 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler'
+    > WITH DEFERRED REBUILD;
+OK
+Time taken: 1.783 seconds
+hive> show tables;
+OK
+air_flight
+flight
+mydb2__flight_flight_index__
+nflight
+values__tmp__table__1
+values__tmp__table__2
+values__tmp__table__3
+Time taken: 0.142 seconds, Fetched: 7 row(s)
+hive> 
